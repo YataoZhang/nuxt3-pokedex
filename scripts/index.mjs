@@ -26,7 +26,3 @@ app.use(async function (ctx, next) {
 });
 
 app.listen(3000, () => console.log('Example app listening on port 3000!'));
-
-// TODO
-// 1. 通过plugins，将__koa_context__挂载到ssrContext.bpnodeContext上，仅针对bpnode
-// 2. 打通路由鉴权，借鉴watchdog的模式

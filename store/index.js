@@ -11,10 +11,10 @@ export const usePokeStore = defineStore('index', () => {
         }
 
         if (process.server) {
-            const bpnodeContext = useBpContext();
-            bpnodeContext.bdlogger.notice('hello bpnode');
-            const ufcRequest = await bpnodeContext.ufc.request({
-
+            const bpnode = useBpContext();
+            bpnode.bdlogger.notice('hello bpnode');
+            const response = await bpnode.ufc.request({
+                // ...
             });
         }
         const { data } = await useFetch(url);
