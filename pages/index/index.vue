@@ -13,6 +13,14 @@
         ></pokemanCard>
     </div>
 </template>
+
+<script>
+export const watchdog = {
+    guardType: 1,
+    sniffGuest: () => false,
+};
+</script>
+
 <script setup>
 import { storeToRefs } from 'pinia';
 import { usePokeStore } from '../../store';

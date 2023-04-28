@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 const url = 'https://pokeapi.co/api/v2/pokemon?limit=150';
+
 export const usePokeStore = defineStore('index', () => {
     let loaded = false;
     const pokemonDetails = {};
@@ -7,6 +8,14 @@ export const usePokeStore = defineStore('index', () => {
     const fetchPokemon = async () => {
         if (loaded) {
             return;
+        }
+
+        if (process.server) {
+            const bpnodeContext = useBpContext();
+            bpnodeContext.bdlogger.notice('hello bpnode');
+            const ufcRequest = await bpnodeContext.ufc.request({
+
+            });
         }
         const { data } = await useFetch(url);
         const loadedPokemon = data.value.results.map((data, index) => {
