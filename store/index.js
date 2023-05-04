@@ -9,13 +9,12 @@ export const usePokeStore = defineStore('index', () => {
         if (loaded) {
             return;
         }
-
         if (process.server) {
             const bpnode = useBpContext();
             bpnode.bdlogger.notice('hello bpnode');
-            const response = await bpnode.ufc.request({
-                // ...
-            });
+            // const response = await bpnode.ufc.request({
+            //     // ...
+            // });
         }
         const { data } = await useFetch(url);
         const loadedPokemon = data.value.results.map((data, index) => {
