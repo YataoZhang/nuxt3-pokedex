@@ -66,12 +66,14 @@ export default defineNuxtModule({
             const pagesDir = path.join(srcDir, pages);
             const allPagesReg = getAllPagesReg(pagesDir, baseURL);
             const routesMeta = {
-                allPagesReg,
-                routes
+                routesReg: allPagesReg,
+                prerenderRoutes: routes
             };
             !nuxt.options.nitro && (nuxt.options.nitro = {});
             Object.assign(nuxt.options.nitro, {
-                plugins: [vitePlugin(routesMeta, nuxt.options.rootDir)]
+                rollupConfig: {
+                    plugins: [vitePlugin(routesMeta)]
+                }
             });
         }
     }
