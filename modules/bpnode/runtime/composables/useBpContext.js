@@ -2,20 +2,7 @@ import get from 'lodash/get';
 
 const MOCK_BPNODE_CONTEXT = {};
 
-function isDevOrGenerate() {
-    if (!process.server) {
-        return false;
-    }
-    if (process.dev) {
-        return true;
-    }
-    if (process.env.npm_lifecycle_script.includes('nuxt generate')) {
-        return true;
-    }
-    return false;
-}
-
-if (isDevOrGenerate()) {
+if (process.server) {
     Object.assign(MOCK_BPNODE_CONTEXT, {
         bdlogger: {
             notice(content) {

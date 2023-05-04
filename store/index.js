@@ -10,8 +10,12 @@ export const usePokeStore = defineStore('index', () => {
             return;
         }
         if (process.server) {
-            const bpnode = useBpContext();
-            bpnode.bdlogger.notice('hello bpnode');
+            try {
+                const bpnode = useBpContext();
+                bpnode.bdlogger.notice('hello bpnode');
+            } catch (e) {
+                console.log(e)
+            }
             // const response = await bpnode.ufc.request({
             //     // ...
             // });
