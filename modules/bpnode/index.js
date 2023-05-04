@@ -57,17 +57,22 @@ export default defineNuxtModule({
 
         if (!nuxt.options.dev) {
             const {
-                srcDir, dir: { pages }, app: { baseURL }, nitro: { prerender: { routes } }
+                srcDir,
+                dir: { pages },
+                app: { baseURL = '/' } = {},
+                nitro: { prerender: { routes = [] } = {} } = {}
             } = nuxt.options;
+
             const pagesDir = path.join(srcDir, pages);
             const allPagesReg = getAllPagesReg(pagesDir, baseURL);
             const routesMeta = {
                 allPagesReg,
                 routes
             };
-            nuxt.options.nitro.rollupConfig = {
+            !nuxt.options.nitro && (nuxt.options.nitro = {});
+            Object.assign(nuxt.options.nitro, {
                 plugins: [vitePlugin(routesMeta, nuxt.options.rootDir)]
-            };
+            });
         }
     }
 })
