@@ -6,5 +6,12 @@ export const useUFCRequest = async (options = {}) => {
     if (!ctx) {
         return null;
     }
-    return ctx.ufc.request(options);
+    let data = {};
+    try {
+        const response = await ctx.ufc.request(options);
+        data = response.data;
+    } catch (ex) {
+        throw ex;
+    }
+    return data;
 }
