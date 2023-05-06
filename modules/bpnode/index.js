@@ -1,23 +1,46 @@
 import { defineNuxtModule, createResolver, addVitePlugin, addImportsDir } from '@nuxt/kit';
 import fg from 'fast-glob';
 import path from 'node:path';
+import flatten from 'lodash/flatten';
+import sortBy from 'lodash/sortBy';
 
 
-function getAllPagesReg(pagesDir, baseURL = '/') {
-    const pages = fg.sync(`${pagesDir}/**/*.(vue|js|jsx|mjs|ts|tsx)`, {
-        onlyFiles: true,
-    }).map(item => {
-        let page = path.join(baseURL, path.relative(pagesDir, item));
-        // [x] [...x] 
+function getAllPagesReg(pagesDir, serverDir) {
+    function normalizeRoutes(page) {
         page = page.replace(/\.(vue|js|jsx|ts|tsx|mjs)$/, '')
-            .replace(/\/index(?=(\/|$))/g, '')
+            .replace(/\/?index(?=(\/|$))/g, '')
             .replace(/\[[^\.\]]+\]/g, '([^\/?&]+)')
             .replace(/\/\[\.\.\.[^\]]\]/g, '(\/[^\/\?&]+)');
 
-        return page + '/?';
-    });
+        if (page) {
+            page = path.join('/', page);
+        }
+        return page;
+    }
 
-    return pages;
+    const pages = [
+        {
+            matcher: `${pagesDir}/**/*.(vue|js|jsx|mjs|ts|tsx)`,
+            base: pagesDir
+        },
+        {
+            matcher: `${serverDir}/api/**/*.(js|mjs|ts)`,
+            base: path.join(serverDir, 'api')
+        },
+        {
+            matcher: `${serverDir}/routes/**/*.(js|mjs|ts)`,
+            base: path.join(serverDir, 'routes')
+        }
+    ].map(({ matcher, base }) => {
+        return fg.sync(matcher, {
+            onlyFiles: true,
+        }).map(item => {
+            let page = path.relative(base, item);
+            return normalizeRoutes(page);
+        });
+    })
+
+    return sortBy(flatten(pages), i => i.length).reverse();
 }
 
 function vitePlugin(source) {
@@ -47,6 +70,7 @@ export default defineNuxtModule({
     },
     // Default configuration options for your module, can also be a function returning those
     defaults: {
+        authLevel: 2
     },
     // Shorthand sugar to register Nuxt hooks
     hooks: {},
@@ -54,20 +78,23 @@ export default defineNuxtModule({
     setup(options, nuxt) {
         const resolver = createResolver(import.meta.url);
         addImportsDir(resolver.resolve('./runtime/composables'));
-
         if (!nuxt.options.dev) {
             const {
                 srcDir,
                 dir: { pages },
+                serverDir,
                 app: { baseURL = '/' } = {},
                 nitro: { prerender: { routes = [] } = {} } = {}
             } = nuxt.options;
 
             const pagesDir = path.join(srcDir, pages);
-            const allPagesReg = getAllPagesReg(pagesDir, baseURL);
+            const allPagesReg = getAllPagesReg(pagesDir, serverDir);
             const routesMeta = {
+                baseURL,
+                app: path.basename(srcDir),
+                authLevel: options.authLevel || 2,
                 routesReg: allPagesReg,
-                prerenderRoutes: routes
+                prerenderRoutes: routes.map(i => i.replace(/\/$/, ''))
             };
             !nuxt.options.nitro && (nuxt.options.nitro = {});
             Object.assign(nuxt.options.nitro, {

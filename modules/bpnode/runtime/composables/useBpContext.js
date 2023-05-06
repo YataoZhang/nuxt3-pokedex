@@ -34,6 +34,5 @@ export const useBpContext = () => {
         return null;
     }
     const nuxtApp = useNuxtApp();
-    // console.log(nuxtApp.ssrContext);
-    return get(nuxtApp.ssrContext, 'event.koaContext', MOCK_BPNODE_CONTEXT);
+    return get(nuxtApp.ssrContext, 'event.ctx', MOCK_BPNODE_CONTEXT);
 };
