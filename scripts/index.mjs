@@ -21,6 +21,7 @@ replaceIndex(nitroApp.h3App.stack);
 app.use(async function (ctx, next) {
     // just use bypassing
     ctx.respond = false;
+    ctx.user = { isLogin: 1, username: 'zhangyatao' };
     ctx.req.__koa_context__ = ctx;
     handler(ctx.req, ctx.res);
 });

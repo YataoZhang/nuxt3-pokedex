@@ -19,6 +19,6 @@
 import { useUserStore } from '~/store/user';
 const store = useUserStore();
 const {
-    user: { name: username, isLogin },
+    user: { username, isLogin },
 } = store;
 </script>
