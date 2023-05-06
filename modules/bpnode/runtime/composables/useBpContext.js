@@ -4,6 +4,9 @@ const MOCK_BPNODE_CONTEXT = {};
 
 if (process.server) {
     Object.assign(MOCK_BPNODE_CONTEXT, {
+        user: {
+
+        },
         bdlogger: {
             notice(content) {
                 console.log('[NOTICE] ', content);
